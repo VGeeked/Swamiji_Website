@@ -1,6 +1,3 @@
-import { supabase } from "@/integrations/supabase/client";
-import { validateGalleryUpload } from "@/lib/uploadValidation";
-
 export type GalleryPhoto = {
   id: string;
   storage_path: string;
@@ -9,60 +6,26 @@ export type GalleryPhoto = {
   url: string;
 };
 
-export const fetchGalleryPhotos = async (limit?: number): Promise<GalleryPhoto[]> => {
-  let query = supabase
-    .from("gallery_photos")
-    .select("id, storage_path, title, created_at")
-    .order("created_at", { ascending: false });
-  if (limit) query = query.limit(limit);
-  const { data, error } = await query;
-  if (error || !data) return [];
-  const paths = data.map((p) => p.storage_path);
-  if (paths.length === 0) return [];
-  const { data: signed } = await supabase.storage
-    .from("gallery")
-    .createSignedUrls(paths, 60 * 60);
-  return data.map((p, i) => ({
-    ...p,
-    url: signed?.[i]?.signedUrl ?? "",
-  }));
-};
+// Static gallery. Drop image files (jpg/png/webp/gif) into src/assets/gallery/
+// and they appear automatically — no backend required. Files are shown in
+// filename order, so prefix with numbers (01-..., 02-...) to control ordering.
+const modules = import.meta.glob(
+  "../assets/gallery/*.{jpg,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}",
+  { eager: true, import: "default" }
+) as Record<string, string>;
 
-export const uploadGalleryPhoto = async (file: File, title?: string) => {
-  const validation = await validateGalleryUpload(file);
-  if (!validation.ok) {
-    throw new Error(validation.message);
-  }
-
-  const path = `${crypto.randomUUID()}.${validation.extension}`;
-  const { error: upErr } = await supabase.storage
-    .from("gallery")
-    .upload(path, file, {
-      cacheControl: "3600",
-      upsert: false,
-      contentType: file.type,
-    });
-  if (upErr) throw upErr;
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const { error: dbErr } = await supabase.from("gallery_photos").insert({
-    storage_path: path,
-    public_url: path,
-    title: title?.slice(0, 200) ?? null,
-    uploaded_by: user?.id,
+const photos: GalleryPhoto[] = Object.entries(modules)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([path, url], i) => {
+    const filename = path.split("/").pop() ?? `photo-${i}`;
+    return {
+      id: String(i),
+      storage_path: path,
+      title: filename.replace(/\.[^.]+$/, ""),
+      created_at: "",
+      url,
+    };
   });
-  if (dbErr) {
-    await supabase.storage.from("gallery").remove([path]);
-    throw dbErr;
-  }
-};
 
-export const deleteGalleryPhoto = async (id: string, storage_path: string) => {
-  const { error: storageErr } = await supabase.storage.from("gallery").remove([storage_path]);
-  if (storageErr) throw storageErr;
-
-  const { error: dbErr } = await supabase.from("gallery_photos").delete().eq("id", id);
-  if (dbErr) throw dbErr;
-};
+export const fetchGalleryPhotos = async (limit?: number): Promise<GalleryPhoto[]> =>
+  typeof limit === "number" ? photos.slice(0, limit) : photos;
