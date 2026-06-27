@@ -4,16 +4,19 @@ export type NewsletterIssue = {
   file: string;
 };
 
-// PDFs live in public/newsletters/ (issue-1.pdf ... issue-N.pdf).
-// To add a new issue: drop issue-{N}.pdf in that folder, bump ISSUE_COUNT, push.
-export const ISSUE_COUNT = 10;
+// Issue numbers that have a PDF in public/newsletters/ (issue-{n}.pdf).
+// Gaps are intentional — issues 15 and 26 are not yet available.
+// To add an issue: drop issue-{n}.pdf in that folder and add its number here.
+const ISSUE_NUMBERS = [
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23,
+  24, 25, 27, 28, 29, 30,
+];
 
 // Latest issue first.
-export const newsletterIssues: NewsletterIssue[] = Array.from(
-  { length: ISSUE_COUNT },
-  (_, i) => ISSUE_COUNT - i
-).map((n) => ({
-  number: n,
-  title: `NEWSLETTER YOGTANTRA AGAMA | Issue ${n}`,
-  file: `/newsletters/issue-${n}.pdf`,
-}));
+export const newsletterIssues: NewsletterIssue[] = [...ISSUE_NUMBERS]
+  .sort((a, b) => b - a)
+  .map((n) => ({
+    number: n,
+    title: `NEWSLETTER YOGTANTRA AGAMA | Issue ${n}`,
+    file: `/newsletters/issue-${n}.pdf`,
+  }));
