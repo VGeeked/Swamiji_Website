@@ -2,18 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, FileText } from "lucide-react";
-
-// Newsletters live as PDFs in public/newsletters/ (issue-1.pdf ... issue-N.pdf).
-// To add a new issue: drop issue-{N}.pdf in that folder, bump ISSUE_COUNT, and push.
-const ISSUE_COUNT = 10;
-
-const issues = Array.from({ length: ISSUE_COUNT }, (_, i) => ISSUE_COUNT - i).map(
-  (n) => ({
-    number: n,
-    title: `NEWSLETTER YOGTANTRA AGAMA | Issue ${n}`,
-    file: `/newsletters/issue-${n}.pdf`,
-  })
-);
+import { newsletterIssues as issues } from "@/lib/newsletters";
 
 const Newsletter = () => {
   return (

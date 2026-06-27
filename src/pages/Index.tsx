@@ -4,8 +4,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShriChakraIntro from "@/components/ShriChakraIntro";
 import { useShriChakraScroll } from "@/hooks/useShriChakraScroll";
+import { FileText } from "lucide-react";
 import swamiji from "@/assets/swamiji-hero.jpg";
 import { fetchGalleryPhotos, type GalleryPhoto } from "@/lib/gallery";
+import { newsletterIssues } from "@/lib/newsletters";
 
 const articles = [
   {
@@ -179,34 +181,68 @@ const Index = () => {
       {/* NEWSLETTER */}
       <section
         id="newsletter"
-        className="bg-primary text-primary-foreground scroll-mt-32"
+        className="bg-secondary/40 border-y border-accent/10 scroll-mt-32"
       >
-        <div className="container mx-auto max-w-4xl px-6 py-16 lg:py-20 text-center">
-          <span className="eyebrow opacity-80 block mb-3">Newsletter</span>
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl mb-4 leading-tight">
-            Monthly wisdom, delivered with care.
-          </h2>
-          <p className="font-serif text-lg opacity-90 mb-8 max-w-2xl mx-auto">
-            Receive teachings, event announcements and spiritual guidance from
-            Swamiji and the Yog Tantra Agama community.
-          </p>
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="max-w-md mx-auto flex flex-col sm:flex-row gap-3"
-          >
-            <input
-              type="email"
-              required
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-3 text-foreground bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-background/40"
-            />
-            <button
-              type="submit"
-              className="px-6 py-3 bg-background text-primary eyebrow hover:opacity-90 transition-opacity"
+        <div className="container mx-auto max-w-7xl px-6 py-16 lg:py-20">
+          <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
+            <div>
+              <span className="eyebrow text-accent/70 block mb-3">Newsletter</span>
+              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-foreground leading-tight">
+                Monthly wisdom, delivered with care
+              </h2>
+            </div>
+            <Link to="/newsletter" className="eyebrow text-primary">
+              All newsletters →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {newsletterIssues.slice(0, 3).map((issue) => (
+              <a
+                key={issue.number}
+                href={issue.file}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-background border border-accent/20 p-6 flex flex-col gap-4 hover:shadow-xl transition-all duration-300"
+              >
+                <FileText className="w-8 h-8 text-primary shrink-0" />
+                <h3 className="font-serif text-lg text-foreground leading-snug flex-1">
+                  {issue.title}
+                </h3>
+                <span className="eyebrow text-primary inline-flex items-center gap-2">
+                  Read Newsletter
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </span>
+              </a>
+            ))}
+          </div>
+
+          <div className="bg-primary text-primary-foreground p-8 lg:p-10 text-center">
+            <p className="font-serif text-xl md:text-2xl mb-3 leading-tight">
+              Receive monthly wisdom in your inbox
+            </p>
+            <p className="font-serif opacity-90 mb-6 max-w-2xl mx-auto">
+              Teachings, event announcements and spiritual guidance from Swamiji
+              and the Yog Tantra Agama community.
+            </p>
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="max-w-md mx-auto flex flex-col sm:flex-row gap-3"
             >
-              Subscribe
-            </button>
-          </form>
+              <input
+                type="email"
+                required
+                placeholder="Enter your email"
+                className="flex-1 px-4 py-3 text-foreground bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-background/40"
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 bg-background text-primary eyebrow hover:opacity-90 transition-opacity"
+              >
+                Subscribe
+              </button>
+            </form>
+          </div>
         </div>
       </section>
 
