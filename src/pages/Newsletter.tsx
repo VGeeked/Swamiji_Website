@@ -1,36 +1,21 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mail } from "lucide-react";
+import { Mail, FileText } from "lucide-react";
+
+// Newsletters live as PDFs in public/newsletters/ (issue-1.pdf ... issue-N.pdf).
+// To add a new issue: drop issue-{N}.pdf in that folder, bump ISSUE_COUNT, and push.
+const ISSUE_COUNT = 10;
+
+const issues = Array.from({ length: ISSUE_COUNT }, (_, i) => ISSUE_COUNT - i).map(
+  (n) => ({
+    number: n,
+    title: `NEWSLETTER YOGTANTRA AGAMA | Issue ${n}`,
+    file: `/newsletters/issue-${n}.pdf`,
+  })
+);
 
 const Newsletter = () => {
-  const newsletters = [
-    {
-      title: "Monthly Wisdom - November 2025",
-      date: "November 1, 2025",
-      description:
-        "This month's newsletter features teachings on the nature of consciousness, upcoming events, and guided practices for deepening your meditation.",
-    },
-    {
-      title: "Monthly Wisdom - October 2025",
-      date: "October 1, 2025",
-      description:
-        "Explore the sacred festival of Navaratri, learn about the nine forms of the Divine Mother, and discover practices for awakening inner Shakti.",
-    },
-    {
-      title: "Monthly Wisdom - September 2025",
-      date: "September 1, 2025",
-      description:
-        "Special edition on the importance of Guru-disciple relationship, featuring stories from the tradition and practical guidance for spiritual practice.",
-    },
-    {
-      title: "Monthly Wisdom - August 2025",
-      date: "August 1, 2025",
-      description:
-        "Understanding the chakra system through the lens of tantra, with specific practices for each energy center and their spiritual significance.",
-    },
-  ];
-
   return (
     <div className="min-h-screen">
       <Header />
@@ -71,25 +56,27 @@ const Newsletter = () => {
             <h2 className="text-3xl font-serif font-bold text-foreground mb-8">
               Past Newsletters
             </h2>
-            {newsletters.map((newsletter, index) => (
+            {issues.map((issue) => (
               <Card
-                key={index}
+                key={issue.number}
                 className="hover:shadow-xl transition-all duration-300"
               >
                 <CardContent className="p-6 lg:p-8">
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-serif font-bold text-foreground mb-2">
-                        {newsletter.title}
+                    <div className="flex items-center gap-4 flex-1">
+                      <FileText className="w-8 h-8 text-primary shrink-0" />
+                      <h3 className="text-xl lg:text-2xl font-serif font-bold text-foreground">
+                        {issue.title}
                       </h3>
-                      <p className="text-sm text-primary mb-3">{newsletter.date}</p>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {newsletter.description}
-                      </p>
                     </div>
-                    <button className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity whitespace-nowrap">
+                    <a
+                      href={issue.file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity whitespace-nowrap text-center"
+                    >
                       Read Newsletter
-                    </button>
+                    </a>
                   </div>
                 </CardContent>
               </Card>
